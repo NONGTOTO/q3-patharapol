@@ -21,13 +21,6 @@ if (!isset($_SESSION['username'])) {
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <link href="mcss.css" rel="stylesheet" type="text/css" />
     <script src="mpage.js"></script>
-    <script>
-        function confirmDelete(username) { 
-            var ans = confirm("ต้องการลบusername " + username); 
-            if (ans == true) 
-                document.location = "deleteworkshop6.php?username=" + username; 
-        }
-    </script>
   </head>
 
   <body>
@@ -36,7 +29,7 @@ if (!isset($_SESSION['username'])) {
       <div class="logo">
         <img src="cslogo.jpg" width="200" alt="Site Logo">
       </div>
-      <h1>Delete Member</h1>
+      <h1>Lab 10</h1>
       <a href="logout.php">logout</a>
     </header>
 
@@ -46,32 +39,48 @@ if (!isset($_SESSION['username'])) {
     </div>
 
     <main>
-      <article>
-      <?php
-$stmt = $pdo->prepare("SELECT * FROM member");
-$stmt->execute();
-
-while ($row = $stmt->fetch()) {
-    ?>
-    <div class="member-photo">
-        <img src='../member_photo/<?= $row["username"] ?>.jpg' width='100'><br>
-    </div><br>
+    <article>
     
-    <?php
-    echo "username: " . $row["username"] . "<br>";
-    echo "ชื่อ: " . $row["name"] . "<br>";
-    echo "ที่อยู่: " . $row["address"] . "<br>";
-    echo "email: " . $row["email"] . "<br>";
-    echo "เบอร์โทรศัพท์: " . $row["mobile"] . "<br>";
-    ?>
-    
-    <a href='#' style='color:blue;' onclick="confirmDelete('<?= $row['username'] ?>')">ลบ</a>|
-    <a href='editmem.php?username=<?= $row["username"] ?>' style="color:green;">แก้ไข</a>
-    <hr>
-    <?php
-}
-?>
-
+    <h2>รายการ Order ของสมาชิก: <?= htmlspecialchars($username) ?></h2>
+    <table border="1">
+        <tr>
+            <th>Order ID</th>
+            <th>วันที่สั่งซื้อ</th>
+            <th>สถานะ</th>
+            <th>จำนวนสินค้า</th>
+            <th>รายละเอียดสินค้า</th>
+        </tr>
+        <?php foreach ($orders as $order): ?>
+        <tr>
+            <td><?= htmlspecialchars($order['ord_id']) ?></td>
+            <td><?= htmlspecialchars($order['ord_date']) ?></td>
+            <td><?= htmlspecialchars($order['status']) ?></td>
+            <td>
+                <?php
+                // ดึงรายการสินค้าที่เกี่ยวข้องกับ ord_id นี้
+                $order_id = $order['ord_id'];
+                $stmt_items = $pdo->prepare("SELECT * FROM item WHERE ord_id = ?");
+                $stmt_items->execute([$order_id]);
+                $items = $stmt_items->fetchAll();
+                echo count($items); // แสดงจำนวนสินค้าที่อยู่ใน Order
+                ?>
+            </td>
+            <td>
+                <ul>
+                <?php foreach ($items as $item): ?>
+                    <?php
+                    // ดึงชื่อสินค้าจากตาราง product
+                    $stmt_product = $pdo->prepare("SELECT pname FROM product WHERE pid = ?");
+                    $stmt_product->execute([$item['pid']]);
+                    $product = $stmt_product->fetch();
+                    ?>
+                    <li><?= htmlspecialchars($product['pname']) ?> (จำนวน: <?= htmlspecialchars($item['quantity']) ?>)</li>
+                <?php endforeach; ?>
+                </ul>
+            </td>
+        </tr>
+        <?php endforeach; ?>
+    </table>
 
       </article>
       <nav id="menu">

@@ -12,7 +12,51 @@ if (!isset($_SESSION['username'])) {
 // ส่วนที่เหลือของโค้ดใน index.php จะอยู่ที่นี่
 ?>
 <html lang="en">
+<script>
+        async function getDataFromAPI() {
+            let response = await fetch('http://202.44.40.193/~aws/JSON/priv_hos.json')
+            let rawData = await response.text()
+            let objectData = JSON.parse(rawData)
 
+            let result = document.getElementById('result')
+
+
+            for (let i = 0; i < objectData.features.length; i++) {
+               console.log(objectData.features[i].properties.num_bed);
+               if(objectData.features[i].properties.num_bed >= 91){
+                  let Large_hos = document.getElementsByClassName('Large')[0];
+
+                  let content = 'ชื่อโรงบาล' + objectData.features[i].properties.name + "(" + objectData.features[i].properties.num_bed + " เตียง)";
+
+                  let div = document.createElement('div');
+                  div.innerHTML = content;
+                  Large_hos.appendChild(div);
+               }
+               else if(objectData.features[i].properties.num_bed >= 31){
+                  let Medium_hos = document.getElementsByClassName('Medium')[0];
+
+                  let content = 'ชื่อโรงบาล' + objectData.features[i].properties.name + "(" + objectData.features[i].properties.num_bed + " เตียง)";
+
+                  let div = document.createElement('div');
+                  div.innerHTML = content;
+                  Medium_hos.appendChild(div);
+               }
+               else{
+                  let Small_hos = document.getElementsByClassName('Small')[0];
+
+                  let content = 'ชื่อโรงบาล' + objectData.features[i].properties.name + "(" + objectData.features[i].properties.num_bed + " เตียง)";
+
+                  let div = document.createElement('div');
+                  div.innerHTML = content;
+                  Small_hos.appendChild(div);
+               }
+
+                
+            }
+        }
+
+        getDataFromAPI() 
+    </script>
   <head>
     <meta charset="utf-8">
     <title>CS Shop</title>
@@ -21,13 +65,6 @@ if (!isset($_SESSION['username'])) {
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <link href="mcss.css" rel="stylesheet" type="text/css" />
     <script src="mpage.js"></script>
-    <script>
-        function confirmDelete(username) { 
-            var ans = confirm("ต้องการลบusername " + username); 
-            if (ans == true) 
-                document.location = "deleteworkshop6.php?username=" + username; 
-        }
-    </script>
   </head>
 
   <body>
@@ -36,7 +73,7 @@ if (!isset($_SESSION['username'])) {
       <div class="logo">
         <img src="cslogo.jpg" width="200" alt="Site Logo">
       </div>
-      <h1>Delete Member</h1>
+      <h1>Lab12</h1>
       <a href="logout.php">logout</a>
     </header>
 
@@ -46,33 +83,12 @@ if (!isset($_SESSION['username'])) {
     </div>
 
     <main>
-      <article>
-      <?php
-$stmt = $pdo->prepare("SELECT * FROM member");
-$stmt->execute();
+    <article>
+    <h1>โรงพยาบาลเอกชนใน กทม.</h1>
 
-while ($row = $stmt->fetch()) {
-    ?>
-    <div class="member-photo">
-        <img src='../member_photo/<?= $row["username"] ?>.jpg' width='100'><br>
-    </div><br>
-    
-    <?php
-    echo "username: " . $row["username"] . "<br>";
-    echo "ชื่อ: " . $row["name"] . "<br>";
-    echo "ที่อยู่: " . $row["address"] . "<br>";
-    echo "email: " . $row["email"] . "<br>";
-    echo "เบอร์โทรศัพท์: " . $row["mobile"] . "<br>";
-    ?>
-    
-    <a href='#' style='color:blue;' onclick="confirmDelete('<?= $row['username'] ?>')">ลบ</a>|
-    <a href='editmem.php?username=<?= $row["username"] ?>' style="color:green;">แก้ไข</a>
-    <hr>
-    <?php
-}
-?>
-
-
+    <div class="Large"><h2>โรงพยาบาลขนาดใหญ่</h2></div>
+    <div class="Medium"><h2>โรงพยาบาลขนาดกลาง</h2></div>
+    <div class="Small"><h2>โรงพยาบาลขนาดเล็ก</h2></div>
       </article>
       <nav id="menu">
         <h2>Navigation</h2>

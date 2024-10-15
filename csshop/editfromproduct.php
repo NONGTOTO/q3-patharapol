@@ -74,7 +74,13 @@ if (!isset($_SESSION['username'])) {
           <li><a href="editproduct.php">Edit product</a></li>
           <li><a href="addproduct.php">Add product</a></li>
           <li><a href="deleteproduct.php">Delete product</a></li>
-          <li><a href="workshopsql.php">workshopsql</a></li>
+          <li><a href="workshopsql.php">lab7workshopsql</a></li>
+          <li><a href="lab10.php">lab10</a></li>
+          <li><a href="lab10order.php">lab10order</a></li>
+          <li><a href="lab10cart.php">lab10cart</a></li>
+          <li><a href="lab10detail.php">lab10detail</a></li>
+          <li><a href="lab11.php">lab11</a></li>
+          <li><a href="lab12.php">lab12</a></li>
         </ul>
       </nav>
       

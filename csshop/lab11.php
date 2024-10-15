@@ -12,7 +12,50 @@ if (!isset($_SESSION['username'])) {
 // ส่วนที่เหลือของโค้ดใน index.php จะอยู่ที่นี่
 ?>
 <html lang="en">
+<script>
+	var xmlHttp;
 
+	function checkUsername() {
+		document.getElementById("username").className = "thinking";
+		
+		xmlHttp = new XMLHttpRequest();
+		xmlHttp.onreadystatechange = showUsernameStatus;
+		
+		var username = document.getElementById("username").value;
+		var url = "checkName.php?username=" + username;
+		xmlHttp.open("GET", url);
+		xmlHttp.send();
+	}
+
+	function showUsernameStatus() {
+		if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
+			if (xmlHttp.responseText == "okay") {
+				document.getElementById("username").className = "approved";
+
+			} else {
+				document.getElementById("username").className = "denied";
+				document.getElementById("username").focus();
+				document.getElementById("username").select();
+			}
+		}
+	}
+</script>
+<script>
+      function send() {
+        request = new XMLHttpRequest();
+        request.onreadystatechange = showResult;
+        var keyword = document.getElementById("keyword").value;
+        var url = "memberTable.php?keyword=" + keyword;
+        request.open("GET", url, true);
+        request.send(null);
+      }
+      function showResult() {
+        if (request.readyState == 4) {
+          if (request.status == 200)
+            document.getElementById("result").innerHTML = request.responseText;
+        }
+      }
+    </script>
   <head>
     <meta charset="utf-8">
     <title>CS Shop</title>
@@ -21,13 +64,6 @@ if (!isset($_SESSION['username'])) {
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <link href="mcss.css" rel="stylesheet" type="text/css" />
     <script src="mpage.js"></script>
-    <script>
-        function confirmDelete(username) { 
-            var ans = confirm("ต้องการลบusername " + username); 
-            if (ans == true) 
-                document.location = "deleteworkshop6.php?username=" + username; 
-        }
-    </script>
   </head>
 
   <body>
@@ -36,7 +72,7 @@ if (!isset($_SESSION['username'])) {
       <div class="logo">
         <img src="cslogo.jpg" width="200" alt="Site Logo">
       </div>
-      <h1>Delete Member</h1>
+      <h1>Lab 11</h1>
       <a href="logout.php">logout</a>
     </header>
 
@@ -46,33 +82,19 @@ if (!isset($_SESSION['username'])) {
     </div>
 
     <main>
-      <article>
-      <?php
-$stmt = $pdo->prepare("SELECT * FROM member");
-$stmt->execute();
-
-while ($row = $stmt->fetch()) {
-    ?>
-    <div class="member-photo">
-        <img src='../member_photo/<?= $row["username"] ?>.jpg' width='100'><br>
-    </div><br>
-    
-    <?php
-    echo "username: " . $row["username"] . "<br>";
-    echo "ชื่อ: " . $row["name"] . "<br>";
-    echo "ที่อยู่: " . $row["address"] . "<br>";
-    echo "email: " . $row["email"] . "<br>";
-    echo "เบอร์โทรศัพท์: " . $row["mobile"] . "<br>";
-    ?>
-    
-    <a href='#' style='color:blue;' onclick="confirmDelete('<?= $row['username'] ?>')">ลบ</a>|
-    <a href='editmem.php?username=<?= $row["username"] ?>' style="color:green;">แก้ไข</a>
-    <hr>
-    <?php
-}
-?>
-
-
+    <article>
+    <form>
+        <h1>Lab11.1</h1>
+		<h1>Please register:</h1>
+		Username:<input id="username" type="text" onblur="checkUsername()"><br>
+		First Name:<input type="text" name="firstname"><br> 
+		Last Name:<input type="text" name="lastname"><br> 
+		Email:<input type="text" name="email"><br> 
+		<input type="submit" value="Register">
+	</form>
+    <h1>Lab11.2</h1>
+    <input type="text" id="keyword" onkeyup="send()" />
+    <div id="result"></div>
       </article>
       <nav id="menu">
         <h2>Navigation</h2>

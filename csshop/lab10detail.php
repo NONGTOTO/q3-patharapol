@@ -21,13 +21,6 @@ if (!isset($_SESSION['username'])) {
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <link href="mcss.css" rel="stylesheet" type="text/css" />
     <script src="mpage.js"></script>
-    <script>
-        function confirmDelete(username) { 
-            var ans = confirm("ต้องการลบusername " + username); 
-            if (ans == true) 
-                document.location = "deleteworkshop6.php?username=" + username; 
-        }
-    </script>
   </head>
 
   <body>
@@ -36,7 +29,7 @@ if (!isset($_SESSION['username'])) {
       <div class="logo">
         <img src="cslogo.jpg" width="200" alt="Site Logo">
       </div>
-      <h1>Delete Member</h1>
+      <h1>Lab 10</h1>
       <a href="logout.php">logout</a>
     </header>
 
@@ -46,33 +39,29 @@ if (!isset($_SESSION['username'])) {
     </div>
 
     <main>
-      <article>
-      <?php
-$stmt = $pdo->prepare("SELECT * FROM member");
-$stmt->execute();
-
-while ($row = $stmt->fetch()) {
-    ?>
-    <div class="member-photo">
-        <img src='../member_photo/<?= $row["username"] ?>.jpg' width='100'><br>
-    </div><br>
-    
+    <article>
     <?php
-    echo "username: " . $row["username"] . "<br>";
-    echo "ชื่อ: " . $row["name"] . "<br>";
-    echo "ที่อยู่: " . $row["address"] . "<br>";
-    echo "email: " . $row["email"] . "<br>";
-    echo "เบอร์โทรศัพท์: " . $row["mobile"] . "<br>";
-    ?>
-    
-    <a href='#' style='color:blue;' onclick="confirmDelete('<?= $row['username'] ?>')">ลบ</a>|
-    <a href='editmem.php?username=<?= $row["username"] ?>' style="color:green;">แก้ไข</a>
-    <hr>
-    <?php
-}
+   // 1. กำหนดคำสั่ง SQL ให้ดึงสินค้าตามรหัสสินค้า
+   $stmt = $pdo->prepare("SELECT * FROM product WHERE pid = ?");
+   $stmt->bindParam(1, $_GET["pid"]);  // 2. นำค่า pid ที่ส่งมากับ URL กำหนดเป็นเงื่อนไข        
+   $stmt->execute(); 	// 3. เริ่มค้นหา
+   $row = $stmt->fetch();	// 4. ดึงผลลัพธ์ (เนื่องจากมีข้อมูล 1 แถวจึงเรียกเมธอด fetch เพียงครั้งเดียว)
 ?>
 
-
+<a href="lab10cart.php?action=">สินค้าในตะกร้า (<?=sizeof($_SESSION['cart'])?>)</a>
+<div style="display:flex">
+<div>
+     <img src='../product_photo/<?=$row["pid"]?>.jpg' width='200'>
+</div>
+<div style="padding: 15px">
+    <h2><?=$row["pname"]?></h2>
+    รายละเอียดสินค้า: <?=$row["pdetail"]?><br>
+    ราคาขาย <?=$row["price"]?> บาท<br>
+	<form method="post" action="lab10cart.php?action=add&pid=<?=$row["pid"]?>&pname=<?=$row["pname"]?>&price=<?=$row["price"]?>">
+		<input type="number" name="qty" value="1" min="1" max="9">
+		<input type="submit" value="ซื้อ">	   
+	</form>
+</div>
       </article>
       <nav id="menu">
         <h2>Navigation</h2>

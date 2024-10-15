@@ -21,13 +21,6 @@ if (!isset($_SESSION['username'])) {
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <link href="mcss.css" rel="stylesheet" type="text/css" />
     <script src="mpage.js"></script>
-    <script>
-        function confirmDelete(username) { 
-            var ans = confirm("ต้องการลบusername " + username); 
-            if (ans == true) 
-                document.location = "deleteworkshop6.php?username=" + username; 
-        }
-    </script>
   </head>
 
   <body>
@@ -36,7 +29,7 @@ if (!isset($_SESSION['username'])) {
       <div class="logo">
         <img src="cslogo.jpg" width="200" alt="Site Logo">
       </div>
-      <h1>Delete Member</h1>
+      <h1>Lab 10</h1>
       <a href="logout.php">logout</a>
     </header>
 
@@ -46,33 +39,47 @@ if (!isset($_SESSION['username'])) {
     </div>
 
     <main>
-      <article>
-      <?php
-$stmt = $pdo->prepare("SELECT * FROM member");
-$stmt->execute();
-
-while ($row = $stmt->fetch()) {
-    ?>
-    <div class="member-photo">
-        <img src='../member_photo/<?= $row["username"] ?>.jpg' width='100'><br>
-    </div><br>
-    
+    <article>
     <?php
-    echo "username: " . $row["username"] . "<br>";
-    echo "ชื่อ: " . $row["name"] . "<br>";
-    echo "ที่อยู่: " . $row["address"] . "<br>";
-    echo "email: " . $row["email"] . "<br>";
-    echo "เบอร์โทรศัพท์: " . $row["mobile"] . "<br>";
+    // ตรวจสอบการสร้าง session ของตะกร้าสินค้า
+    if (!isset($_SESSION['cart'])) {
+        $_SESSION['cart'] = array();
+    }
     ?>
     
-    <a href='#' style='color:blue;' onclick="confirmDelete('<?= $row['username'] ?>')">ลบ</a>|
-    <a href='editmem.php?username=<?= $row["username"] ?>' style="color:green;">แก้ไข</a>
-    <hr>
+    <div>
+        <p>ยินดีต้อนรับ, <?= htmlspecialchars($_SESSION['username']) ?>!</p>
+        
+    </div>
+
+    <a href="lab10cart.php?action=">สินค้าในตะกร้า (<?= sizeof($_SESSION['cart']) ?>)</a>
+
+    <div style="display:flex">    
     <?php
-}
-?>
+        // ดึงข้อมูลสินค้าจากฐานข้อมูล
+        $stmt = $pdo->prepare("SELECT * FROM product");
+        $stmt->execute();
+        while ($row = $stmt->fetch()) { 
+            $quantity = $row['quantity']; // จำนวนสินค้าคงเหลือ
+    ?>
+        <div style="padding: 15px; text-align: center">
+            <a href="lab10detail.php?pid=<?=$row["pid"]?>">
+                <img src='../product_photo/<?=$row["pid"]?>.jpg' width='100'>
+            </a><br>
+            <?=$row["pname"]?><br><?=$row["price"]?> บาท<br>    
 
+            <form method="post" action="lab10cart.php?action=add&pid=<?=$row["pid"]?>&pname=<?=$row["pname"]?>&price=<?=$row["price"]?>">
+                <input type="number" name="qty" value="1" min="1" max="<?= $quantity ?>"> <!-- จำกัดจำนวนสูงสุดตามจำนวนคงเหลือ -->
+                <input type="submit" value="ซื้อ">       
+            </form>
 
+            <?php if (isset($_SESSION['role']) && $_SESSION['role'] == 'admin'): ?> <!-- ตรวจสอบสิทธิ์ Admin -->
+                <p>จำนวนคงเหลือ: <?= $quantity ?> ชิ้น</p> <!-- แสดงจำนวนสินค้าคงเหลือ -->
+               
+            <?php endif; ?>
+        </div>
+    <?php } ?>
+    </div>
       </article>
       <nav id="menu">
         <h2>Navigation</h2>
