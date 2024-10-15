@@ -1,0 +1,113 @@
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <script>
+
+   var dropDownContent = [];
+
+   window.onload = function() {
+      send(); 
+    };
+    function send() {
+      var request = new XMLHttpRequest();
+      request.onreadystatechange = function () {
+        if (request.readyState == 4 && request.status == 200) {
+          showResult(request.responseText);
+        }
+      };
+      var url = "http://202.44.40.193/~aws/JSON/priv_hos.json";
+      request.open("GET", url, true);
+      request.send();
+    }
+
+    function showResult(response) {
+      let objectData = JSON.parse(response);
+      let tab = document.getElementById('tab');
+
+      for (let i = 0; i < objectData.features.length; i++) {
+        let newRow = document.createElement('tr');
+
+        let no = document.createElement('td');
+        let name = document.createElement('td');
+        let Large = document.createElement('td');
+        let Medium = document.createElement('td');
+        let Small = document.createElement('td');
+
+        no.innerHTML = i + 1;
+        name.innerHTML = objectData.features[i].properties.name;
+
+        if (objectData.features[i].properties.num_bed >= 91) {
+          Large.innerHTML = '&#10003';
+         dropDownContent.push(objectData.features[i]);
+        } else if (objectData.features[i].properties.num_bed >= 31) {
+          Medium.innerHTML = '&#10003';
+        } else {
+          Small.innerHTML = '&#10003';
+        }
+
+        newRow.appendChild(no);
+        newRow.appendChild(name);
+        newRow.appendChild(Large);
+        newRow.appendChild(Medium);
+        newRow.appendChild(Small);
+
+        tab.appendChild(newRow);
+      }
+
+      showDropDown();
+    }
+
+    function showDropDown(){
+
+      console.log(dropDownContent);
+      drop = document.getElementById('BigHos');
+
+      for(let i = 0 ; i < dropDownContent.length;i++){
+         drop.innerHTML = drop.innerHTML + "<option value=''>" + dropDownContent[i].properties.name + "</option>";
+      }
+
+    }
+    
+  </script>
+  <style>
+    table, tr, td, th {
+      padding: 30px;
+      border: 1px solid black;
+      border-collapse: collapse;
+      text-align: center;
+    }
+h1,h2{
+  text-align: center;
+}
+    table {
+      margin: 0 auto;
+      width: 70%;
+    }
+    
+  </style>
+</head>
+
+<body>
+  <h1>โรงพยาบาลเอกชนใน กทม.
+    
+  </h1>
+  <h2>
+    <select name="" id="BigHos">
+      
+    </select>
+  </h2>
+  <table id="tab">
+    <tr>
+      <th>No.</th>
+      <th>ชื่อโรงพยาบาล</th>
+      <th>ขนาดใหญ่</th>
+      <th>ขนาดกลาง</th>
+      <th>ขนาดเล็ก</th>
+    </tr>
+  </table>
+
+
+</body>
+
+</html>

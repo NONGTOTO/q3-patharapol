@@ -110,6 +110,7 @@ if (!isset($_SESSION['username'])) {
           <li><a href="lab10detail.php">lab10detail</a></li>
           <li><a href="lab11.php">lab11</a></li>
           <li><a href="lab12.php">lab12</a></li>
+          <li><a href="q_trytest.php">testquiz4</a></li>
         </ul>
       </nav>
      
